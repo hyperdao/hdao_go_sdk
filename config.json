@@ -1,0 +1,4 @@
+{
+	"cdcs_db_driver":"sqlite3",
+	"cdcs_db_path" :"F:/gitwork/stable_coin_python_sdk/examples/cdcs_data/cdcs.db"
+}

@@ -17,7 +17,7 @@ type CDCOperation struct {
 	Asset      string
 	Precision  int
 }
-
+// create a new CDC
 func NewCDCOperation(account string, contract string, wallet_api *HXWalletApi) (*CDCOperation, error) {
 	r := CDCOperation{
 		Account:    account,

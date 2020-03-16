@@ -49,11 +49,11 @@ func (walletApi *HXWalletApi) Rpc_request(method string, args []interface{}) (st
 	auth_str := walletApi.Rpc_user + ":" + walletApi.Rpc_password
 
 	basic_auth := base64.StdEncoding.EncodeToString([]byte(auth_str))
-	request.Header.Set("Content-Type", "application/json") //添加请求头
+	request.Header.Set("Content-Type", "application/json") //add request header
 	request.Header.Add("cache-control", "no-cache")
 	request.Header.Add("User-Agent", "Web Client")
 	request.Header.Add("Authorization", basic_auth)
-	resp, err := http.DefaultClient.Do(request.WithContext(context.TODO())) //发送请求
+	resp, err := http.DefaultClient.Do(request.WithContext(context.TODO())) //send request
 	defer resp.Body.Close()
 	if err != nil {
 		fmt.Println(err.Error())

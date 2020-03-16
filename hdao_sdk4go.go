@@ -59,6 +59,9 @@ func Query_cdcs(start int, limit int, state int, ownerAddress string) (*[]CdcTab
 		r = r.Where("owner", ownerAddress)
 	}
 	err := r.Limit(limit).Offset(start).Select()
+	if err != nil {
+	    fmt.Println(err)
+	}
 	return &cdcs, err
 }
 
@@ -66,6 +69,9 @@ func Query_cdc_by_id(cdcId string) (CdcTable, error) {
 	db := DB()
 	var cdc CdcTable
 	err := db.Table(&cdc).Where("cdcId", cdcId).Select()
+	if err != nil {
+	    fmt.Println(err)
+	}
 	return cdc, err
 }
 
@@ -73,5 +79,8 @@ func Query_supply(startblocknum int, endblocknum int) (*[]StableTokenSupplyHisto
 	db := DB()
 	var supplys []StableTokenSupplyHistoryTable
 	err := db.Table(&supplys).Where("block_number", ">=", startblocknum).Where("block_number", "<=", endblocknum).Select()
+	if err != nil {
+	    fmt.Println(err)
+	}
 	return &supplys, err
 }

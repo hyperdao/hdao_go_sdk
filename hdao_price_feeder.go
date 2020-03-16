@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 )
-
+// price feeders
 var gasPrice = 0.0001
 var gasLimit = 1000000
 

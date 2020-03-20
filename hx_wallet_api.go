@@ -11,7 +11,7 @@ import (
 	"net/http"
 	"strings"
 )
-
+// construct rpc request msg to hx mainchain
 type HXWalletApi struct {
 	Name         string
 	Rpc_user     string

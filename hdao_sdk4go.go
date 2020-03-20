@@ -44,7 +44,7 @@ func Query_cdc_by_address(ownerAddress string) (CdcTable, error) {
 	return cdc, err
 }
 
-//state=-1 表示查询不限state  ownerAddress="" 表示查询不限owner
+//state=-1 refers to  all state  ownerAddress="" refers to all owner
 func Query_cdcs(start int, limit int, state int, ownerAddress string) (*[]CdcTable, error) {
 	db := DB()
 	var cdcs []CdcTable

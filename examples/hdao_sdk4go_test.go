@@ -1,9 +1,8 @@
-package hdao_sdk4go
+package hdao
 
 import (
-	"testing"
-
 	"fmt"
+	"testing"
 )
 
 func TestQuery(t *testing.T) {

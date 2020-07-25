@@ -1,6 +1,6 @@
 // hdao_sdk4go project hdao_sdk4go.go
 
-package hdao_sdk4go
+package hdao
 
 //import "math/big"
 

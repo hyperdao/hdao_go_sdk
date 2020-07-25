@@ -1,9 +1,10 @@
-package hdao_sdk4go
+package hdao
 
 import (
 	"strconv"
 	"strings"
 )
+
 // price feeders
 var gasPrice = 0.0001
 var gasLimit = 1000000
@@ -11,10 +12,10 @@ var gasLimit = 1000000
 type PriceFeeder struct {
 	Account    string
 	Contract   string
-	Wallet_api *HXWalletApi
+	Wallet_api HXWalletApi
 }
 
-func NewPriceFeeder(account string, contract string, wallet_api *HXWalletApi) *PriceFeeder {
+func NewPriceFeeder(account string, contract string, wallet_api HXWalletApi) *PriceFeeder {
 	r := PriceFeeder{
 		Account:    account,
 		Contract:   contract,

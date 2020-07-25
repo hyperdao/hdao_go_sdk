@@ -1,6 +1,6 @@
 // hdao_sdk4go project hdao_sdk4go.go
 
-package hdao_sdk4go
+package hdao
 
 import (
 	"encoding/json"
@@ -60,7 +60,7 @@ func Query_cdcs(start int, limit int, state int, ownerAddress string) (*[]CdcTab
 	}
 	err := r.Limit(limit).Offset(start).Select()
 	if err != nil {
-	    fmt.Println(err)
+		fmt.Println(err)
 	}
 	return &cdcs, err
 }
@@ -70,7 +70,7 @@ func Query_cdc_by_id(cdcId string) (CdcTable, error) {
 	var cdc CdcTable
 	err := db.Table(&cdc).Where("cdcId", cdcId).Select()
 	if err != nil {
-	    fmt.Println(err)
+		fmt.Println(err)
 	}
 	return cdc, err
 }
@@ -80,7 +80,7 @@ func Query_supply(startblocknum int, endblocknum int) (*[]StableTokenSupplyHisto
 	var supplys []StableTokenSupplyHistoryTable
 	err := db.Table(&supplys).Where("block_number", ">=", startblocknum).Where("block_number", "<=", endblocknum).Select()
 	if err != nil {
-	    fmt.Println(err)
+		fmt.Println(err)
 	}
 	return &supplys, err
 }

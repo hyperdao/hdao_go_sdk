@@ -1,4 +1,4 @@
-package hdao_sdk4go
+package hdao
 
 import (
 	"encoding/json"
@@ -17,6 +17,7 @@ type CDCOperation struct {
 	Asset      string
 	Precision  int
 }
+
 // create a new CDC
 func NewCDCOperation(account string, contract string, wallet_api *HXWalletApi) (*CDCOperation, error) {
 	r := CDCOperation{
@@ -45,13 +46,13 @@ func NewCDCOperation(account string, contract string, wallet_api *HXWalletApi) (
 }
 
 var stableCoinPrecision = 100000000
-func coinAmountValid(stableCoinAmount float64) (bool,error){
+
+func coinAmountValid(stableCoinAmount float64) (bool, error) {
 	if collateralAmount < 0.00000001 {
 		return false, errors.New("collateralAmount must > 0")
 	}
-	return true,_
+	return true, _
 }
-
 
 //apis
 
@@ -62,7 +63,7 @@ func (cdcOperation *CDCOperation) Init_config(collateralAsset string, collateral
 }
 
 func (cdcOperation *CDCOperation) Open_cdc(collateralAmount float64, stableCoinAmount float64) (string, error) {
-	if valid,error:=coinAmountValid(stableCoinAmount);valid == false  {
+	if valid, error := coinAmountValid(stableCoinAmount); valid == false {
 		return "", error
 	}
 
@@ -74,7 +75,7 @@ func (cdcOperation *CDCOperation) Open_cdc(collateralAmount float64, stableCoinA
 }
 
 func (cdcOperation *CDCOperation) Add_collateral(cdc_id string, collateralAmount float64) (string, error) {
-	if valid,error:=coinAmountValid(stableCoinAmount);valid == false  {
+	if valid, error := coinAmountValid(stableCoinAmount); valid == false {
 		return "", error
 	}
 	apiargstr := "addCollateral," + cdc_id
@@ -82,7 +83,7 @@ func (cdcOperation *CDCOperation) Add_collateral(cdc_id string, collateralAmount
 }
 
 func (cdcOperation *CDCOperation) Generate_stable_coin(cdc_id string, stableCoinAmount float64) (string, error) {
-	if valid,error:=coinAmountValid(stableCoinAmount);valid == false  {
+	if valid, error := coinAmountValid(stableCoinAmount); valid == false {
 		return "", error
 	}
 	apiargs := []string{cdc_id, strconv.FormatFloat(stableCoinAmount*float64(stableCoinPrecision), 'f', 0, 64)}
@@ -91,7 +92,7 @@ func (cdcOperation *CDCOperation) Generate_stable_coin(cdc_id string, stableCoin
 }
 
 func (cdcOperation *CDCOperation) Withdraw_collateral(cdc_id string, amount float64) (string, error) {
-	if valid,error:=coinAmountValid(stableCoinAmount);valid == false  {
+	if valid, error := coinAmountValid(stableCoinAmount); valid == false {
 		return "", error
 	}
 	apiargs := []string{cdc_id, strconv.FormatFloat(amount*float64(cdcOperation.Precision), 'f', 0, 64)}
@@ -107,7 +108,7 @@ func (cdcOperation *CDCOperation) Transfer_cdc(cdc_id string, addr string) (stri
 }
 
 func (cdcOperation *CDCOperation) Pay_back(cdc_id string, stableCoinAmount float64) (string, error) {
-	if valid,error:=coinAmountValid(stableCoinAmount);valid == false  {
+	if valid, error := coinAmountValid(stableCoinAmount); valid == false {
 		return "", error
 	}
 	apiargs := []string{cdc_id, strconv.FormatFloat(stableCoinAmount*float64(stableCoinPrecision), 'f', 0, 64)}

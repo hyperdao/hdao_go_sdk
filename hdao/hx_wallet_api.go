@@ -1,4 +1,4 @@
-package hdao_sdk4go
+package hdao
 
 import (
 	"context"
@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"strings"
 )
+
 // construct rpc request msg to hx mainchain
 type HXWalletApi struct {
 	Name         string

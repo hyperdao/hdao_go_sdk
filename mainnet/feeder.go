@@ -6,6 +6,7 @@ import (
 	"github.com/shopspring/decimal"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 )
 
 type FeederInfo struct {
@@ -86,7 +87,56 @@ func newApriceFeeder(symbolPair string, priceFeeder_contract_address string, acc
 	return result
 }
 
-func (feeder *APriceFeeder) feederPrice() {
+func (feeder *APriceFeeder) feederPrice() bool {
 	maxChangeRatio := 0.099999
+	var pricestr = ""
+	for _,v:= range feeder.PriceGrabs {
+		pricestr,_ = v.grab_price()
+		if pricestr != ""{
+			break
+		}
+	}
+	if pricestr != "" {
+		return false
+	}
+	r,err:= feeder.walletPriceFeederApi.Get_feedPrices()
+	if err != nil{
+		return false
+	}
+	feedPrices := make(map[string]string)
+	err = json.Unmarshal([]byte(r), &feedPrices)
+	if err != nil {
+		return false
+	}
+	origPriceStr := feedPrices[feeder.account_addr]
+	price,err:= strconv.ParseFloat(pricestr,64)
+	origPrice,err := strconv.ParseFloat(origPriceStr,64)
 
+	if price> origPrice {
+		for {
+			if  (price <= origPrice*(1+maxChangeRatio)){
+				break
+			}
+			newPrice := origPrice*(1+maxChangeRatio)
+			r ,err= feeder.walletPriceFeederApi.Feed_price(newPrice)
+			if err != nil {
+				return false
+			}
+			origPrice = newPrice
+		}
+	}else{
+		for {
+			if price >= origPrice*(1- maxChangeRatio) {
+				newPrice := origPrice * (1 - maxChangeRatio)
+				r ,err= feeder.walletPriceFeederApi.Feed_price(newPrice)
+				if err != nil {
+					return false
+				}
+				origPrice = newPrice
+			}
+		}
+
+	}
+	r ,_= feeder.walletPriceFeederApi.Feed_price(price)
+	return true
 }

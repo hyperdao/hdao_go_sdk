@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type FeederInfo struct {
@@ -139,4 +140,26 @@ func (feeder *APriceFeeder) feederPrice() bool {
 	}
 	r ,_= feeder.walletPriceFeederApi.Feed_price(price)
 	return true
+}
+
+
+type  ContractPriceFeedingRobot struct {
+	contractAddr string
+	contractFeedingInfo string
+	aPriceFeeders []APriceFeeder
+	running bool
+	startTime time.Time
+	stopTime time.Time
+	successFeedCount int
+	failFeedCount    int
+	symbolPair string
+	symbolPairExchangeWebSitesInfo string
+	webnames string
+	wallet_api_url string
+
+}
+
+func newContractPriceFeedingRobot() ContractPriceFeedingRobot  {
+
+
 }

@@ -4,6 +4,7 @@ import (
 	"../hdao"
 	"encoding/json"
 	"github.com/shopspring/decimal"
+	"github.com/spf13/viper"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -142,10 +143,9 @@ func (feeder *APriceFeeder) feederPrice() bool {
 	return true
 }
 
-
 type  ContractPriceFeedingRobot struct {
 	contractAddr string
-	contractFeedingInfo string
+	contractFeedingInfo ContractFeedingInfo
 	aPriceFeeders []APriceFeeder
 	running bool
 	startTime time.Time
@@ -159,7 +159,63 @@ type  ContractPriceFeedingRobot struct {
 
 }
 
-func newContractPriceFeedingRobot() ContractPriceFeedingRobot  {
+func (robot * ContractPriceFeedingRobot) run()  {
+	robot.running = true
+	var interval  = robot.contractFeedingInfo.inteverl
+	isContinue := true
+	robot.startTime = time.Now()
+	feedersCount := len(robot.aPriceFeeders)
+	rounds := 0
+	for {
+		if (isContinue && robot.running) == false{
+			return
+		}
 
+		for _,v := range robot.aPriceFeeders {
+			r := v.feederPrice()
+			if r== false{
+				robot.failFeedCount += 1
+			}else {
+				robot.successFeedCount += 1
+			}
+		}
+		rounds += 1
+		time.Sleep( time.Duration(interval) * time.Second)
 
+		if (robot.failFeedCount >5 && robot.failFeedCount /(robot.failFeedCount + robot.successFeedCount) >= 1/feedersCount) {
+			isContinue = false
+		}
+	}
+	if robot.running == true {
+		robot.running = false
+	}
+	robot.stopTime = time.Now()
 }
+
+func (robot *ContractPriceFeedingRobot)start()  {
+	 robot.run()
+}
+
+func (robot *ContractPriceFeedingRobot)stop()  {
+	robot.running = false
+}
+
+
+type PriceFeedingFactory struct {
+	robots []APriceFeeder
+	json_config map[string]interface{}
+	robot_config_filepath string
+}
+func (factory* PriceFeedingFactory) loadConfigFile() error {
+	viper.SetConfigFile(factory.robot_config_filepath)
+	err := viper.ReadInConfig()
+	if err !=nil {
+		return err
+	}
+	factory.json_config["feedingContractsInfo"] = viper.Get("feedingContractsInfo")
+	factory.json_config["exchangeWebSitesInfo"] = viper.Get("exchangeWebSitesInfo")
+
+	return nil
+}
+
+

@@ -200,9 +200,23 @@ func (robot *ContractPriceFeedingRobot)stop()  {
 	robot.running = false
 }
 
+func  newContractPriceFeedingRobot(contract ContractFeedingInfo,exchange interface{} ) ContractPriceFeedingRobot {
+	var robot ContractPriceFeedingRobot = ContractPriceFeedingRobot{}
+	robot.running = false
+	robot.contractAddr = contract.price_feeder_contract_address
+	robot.successFeedCount = 0
+	robot.failFeedCount = 0
+	robot.symbolPair = contract.symbol
+	exchange_info := exchange.(map[string]interface{})
+	robot.symbolPairExchangeWebSitesInfo = exchange_info[robot.symbolPair].(string)
+
+	return robot
+
+}
+
 
 type PriceFeedingFactory struct {
-	robots []APriceFeeder
+	robots [] ContractPriceFeedingRobot
 	json_config map[string]interface{}
 	robot_config_filepath string
 }
@@ -218,4 +232,29 @@ func (factory* PriceFeedingFactory) loadConfigFile() error {
 	return nil
 }
 
+func (factory * PriceFeedingFactory)stop()  {
+	if len(factory.robots) > 0 {
+		for _,robot := range factory.robots {
+			robot.stop()
+		}
+	}
+}
+
+func (factory * PriceFeedingFactory)start()  {
+	if len(factory.robots) >0{
+		return
+	}
+	factory.loadConfigFile()
+	var feedingContractsInfo  interface{}= factory.json_config["feedingContractsInfo"]
+	var exchangeWebSitesInfo interface{}= factory.json_config["exchangeWebSitesInfo"]
+	feedingContracts := feedingContractsInfo.([]ContractFeedingInfo)
+	for _,v := range (feedingContracts){
+		robot := newContractPriceFeedingRobot(v,exchangeWebSitesInfo)
+		factory.robots = append(factory.robots, robot)
+	}
+
+	for _,robot := range factory.robots {
+		robot.start()
+	}
+}
 
